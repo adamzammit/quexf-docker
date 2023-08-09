@@ -234,31 +234,34 @@ EOF
 
 $stderr = fopen('php://stderr', 'w');
 
-list($host, $socket) = explode(':', $argv[1], 2);
+$host = $argv[1];
+$socket = null;
+if (str_contains($host, ':')) {
+    list($host, $socket) = explode(':', $argv[1], 2);
+}
 $port = 0;
 if (is_numeric($socket)) {
 	$port = (int) $socket;
 	$socket = null;
 }
 
-$maxTries = 50;
+$mysql = false;
 do {
     $con = mysqli_init();
     if (isset($argv[5]) && !empty($argv[5])) {
 	    mysqli_ssl_set($con,NULL,NULL,$argv[5],NULL,NULL);
     }
-    $mysql = mysqli_real_connect($con,$host, $argv[2], $argv[3], '', $port, $socket, MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT);
-        if (!$mysql) {
-                fwrite($stderr, "\n" . 'MySQL Connection Error: (' . $mysql->connect_errno . ') ' . $mysql->connect_error . "\n");
-                --$maxTries;
-                if ($maxTries <= 0) {
-                        exit(1);
-                }
-                sleep(3);
-        }
+    try {
+           $mysql = mysqli_real_connect($con,$host, $argv[2], $argv[3], '', $port, $socket, MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT);
+       } catch (Exception $e) {
+          fwrite($stderr, $e->getMessage() . " - Trying again in 3 seconds\n");
+          sleep(3);
+    }
 } while (!$mysql);
 
-if (!$con->query('CREATE DATABASE IF NOT EXISTS `' . $con->real_escape_string($argv[4]) . '`')) {
+try {
+       $con->query('CREATE DATABASE IF NOT EXISTS `' . $con->real_escape_string($argv[4]) . '`');
+} catch (Exception $e) {
         fwrite($stderr, "\n" . 'MySQL "CREATE DATABASE" Error: ' . $con->error . "\n");
         $con->close();
         exit(1);
@@ -268,7 +271,10 @@ if (!$con->query('CREATE DATABASE IF NOT EXISTS `' . $con->real_escape_string($a
 $con->select_db($con->real_escape_string($argv[4]));
 
 
-if (!$con->query('SELECT COUNT(*) AS C FROM ' . $argv[4] . '.boxgrouptypes')) {
+$dbpop = true;
+try {
+   $con->query('SELECT COUNT(*) AS C FROM ' . $con->real_escape_string($argv[4]) . '.boxgrouptypes');
+} catch (Exception $e) {
     fwrite($stderr, "\n" . 'Cannot find queXF database. Will now populate... ' . $con->error . "\n");
 
     $command = 'mysql'
@@ -285,9 +291,12 @@ if (!$con->query('SELECT COUNT(*) AS C FROM ' . $argv[4] . '.boxgrouptypes')) {
 
     $con->query("INSERT INTO " . $argv[4] . ".verifiers (description,http_username) VALUES ('Administrator','admin')");
 	
-} else {
-	fwrite($stderr, "\n" . 'queXF Database found. Leaving unchanged.' . "\n");
 }
+
+if ($dbpop) {
+    fwrite($stderr, "\n" . 'queXS Database found. Leaving unchanged.' . "\n");
+}
+
 
 $con->close();
 EOPHP
