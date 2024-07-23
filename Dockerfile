@@ -1,6 +1,6 @@
 FROM php:8.1-apache
 
-ENV DOWNLOAD_URL https://master.dl.sourceforge.net/project/quexf/quexf/quexf-1.21.0/quexf-1.21.0.zip
+ENV DOWNLOAD_URL https://master.dl.sourceforge.net/project/quexf/quexf/quexf-1.21.1/quexf-1.21.1.zip
 
 # install the PHP extensions we need
 RUN apt-get update && apt-get install -y unzip libpng-dev libjpeg-dev mariadb-client ghostscript tesseract-ocr apache2-utils zlib1g-dev && rm -rf /var/lib/apt/lists/* \
