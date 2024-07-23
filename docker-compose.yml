@@ -3,7 +3,7 @@ version: '2'
 services:
 
   quexf:
-    image: registry.acspri.org.au/quexf:1.21.0
+    image: registry.acspri.org.au/quexf:1.21.1
     build: .
     ports:
       - 8079:80
