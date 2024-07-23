@@ -19,6 +19,8 @@ services:
       QUEXF_HORI_WIDTH_BOX: 58
       QUEXF_VERT_WIDTH_BOX: 58
       QUEXF_BARCODE_TLX_PORTION: 0.5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
 
   mysql:
