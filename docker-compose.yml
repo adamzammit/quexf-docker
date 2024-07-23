@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
 
   mysql:
-    image: mariadb:10.5
+    image: registry.acspri.org.au/mariadb:10.5
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: example
