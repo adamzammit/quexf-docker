@@ -3,7 +3,7 @@ version: '2'
 services:
 
   quexf:
-    image: registry.acspri.org.au/quexf:1.21.1
+    image: acspri/quexf:1.21.1
     build: .
     ports:
       - 8079:80
@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
 
   mysql:
-    image: registry.acspri.org.au/mariadb:10.5
+    image: mariadb:10.5
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: example
