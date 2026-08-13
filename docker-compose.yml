@@ -1,9 +1,7 @@
-version: '2'
-
 services:
 
   quexf:
-    image: acspri/quexf:1.21.1
+    image: acspri/quexf:1.22.0
     build: .
     ports:
       - 8079:80
@@ -22,7 +20,8 @@ services:
     restart: unless-stopped
 
   mysql:
-    image: mariadb:10.5
+    image: mariadb:lts
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: example
+      MARIADB_AUTO_UPGRADE: true

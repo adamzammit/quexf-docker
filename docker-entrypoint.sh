@@ -282,7 +282,6 @@ try {
         . ' --user=' . $argv[2]
         . ' --password=' . $argv[3]
         . ' --database=' . $argv[4]
-        . ' --ssl-ca=' . $argv[5]
         . ' --execute="SOURCE ';
 
     fwrite($stderr, "\n" . 'Loading queXF database...' . "\n");
